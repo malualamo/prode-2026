@@ -84,7 +84,7 @@
   }
   h1 {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(3.5rem, 10vw, 6.5rem);
+    font-size: clamp(2.4rem, 9vw, 6.5rem);
     letter-spacing: 0.06em;
     line-height: 0.9;
     color: var(--celeste-dark);
@@ -728,10 +728,6 @@
     padding-top: 0.65rem;
   }
 
-  @media (max-width: 500px) {
-    .reglas-body { grid-template-columns: 1fr; }
-  }
-
   /* ── FOOTER ── */
   footer {
     text-align: center;
@@ -744,12 +740,76 @@
   }
 
   /* ── RESPONSIVE ── */
-  @media (max-width: 500px) {
-    .stats-bar { grid-template-columns: repeat(3, 1fr); }
-    .pozo-grid { grid-template-columns: 1fr; }
+  @media (max-width: 600px) {
+    .wrapper {
+      padding: 0 0.75rem 2rem;
+    }
+    header {
+      padding: 1.25rem 0 0.75rem;
+    }
+    .trophy-icon {
+      font-size: 2rem;
+    }
+    .trophy-line .line {
+      max-width: 80px;
+    }
+    .subtitle {
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+    .stats-bar {
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .stat-item {
+      padding: 0.75rem 0.4rem;
+      border-radius: 14px;
+    }
+    .stat-label {
+      font-size: 0.58rem;
+    }
+    .stat-value { font-size: 1.5rem; }
+    .stat-value.money { font-size: 1.05rem; }
+    .section {
+      margin-bottom: 1.5rem;
+    }
+    .section-icon {
+      width: 30px;
+      height: 30px;
+      font-size: 0.95rem;
+    }
+    .section-title {
+      font-size: 0.88rem;
+    }
+    .phase-badge {
+      font-size: 0.75rem;
+      padding: 0.4rem 1rem;
+    }
+    .reglas-body { grid-template-columns: 1fr; }
+    .reglas-card {
+      padding: 0.875rem 0.875rem;
+    }
+    .aviso-msg {
+      font-size: 0.85rem;
+      padding: 0.75rem 0.875rem;
+    }
+    .aviso-urgente {
+      font-size: 0.9rem !important;
+    }
+    .pozo-grid { grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .pozo-card { padding: 1rem; }
+    .pozo-amount { font-size: 1.8rem; }
     .partidos-grid { grid-template-columns: 1fr; }
-    .stat-value { font-size: 1.6rem; }
-    .stat-value.money { font-size: 1.2rem; }
+    .links-row { gap: 0.5rem; }
+    .link-btn {
+      padding: 0.55rem 0.9rem;
+      font-size: 0.82rem;
+    }
+    .pred-select-wrap { max-width: 100%; }
+    footer {
+      padding: 1.25rem 0 0;
+      font-size: 0.78rem;
+    }
   }
 </style>
 </head>

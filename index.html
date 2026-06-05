@@ -663,6 +663,8 @@
     box-shadow: var(--shadow);
   }
   .reglas-header {
+    display: flex;
+    align-items: center;
     font-size: 0.9rem;
     font-weight: 900;
     text-transform: uppercase;
@@ -671,6 +673,34 @@
     margin-bottom: 1rem;
     padding-bottom: 0.6rem;
     border-bottom: 2px solid var(--celeste-light);
+    cursor: pointer;
+    user-select: none;
+  }
+  .reglas-toggle {
+    margin-left: auto;
+    background: none;
+    border: 1.5px solid var(--celeste-light);
+    border-radius: 8px;
+    padding: 0.18rem 0.6rem;
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: var(--celeste-dark);
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    transition: background 0.15s;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+  }
+  .reglas-toggle:hover { background: var(--celeste-pale); }
+  .reglas-card.collapsed .reglas-body,
+  .reglas-card.collapsed .reglas-faqs {
+    display: none;
+  }
+  .reglas-card.collapsed .reglas-header {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
   }
   .reglas-body {
     display: grid;
@@ -810,6 +840,13 @@
       padding: 1.25rem 0 0;
       font-size: 0.78rem;
     }
+    /* Ocultar columna CÓD en celular para que entre el visitante */
+    .partidos-table th:first-child,
+    .partidos-table td:first-child {
+      display: none;
+    }
+    .pt-team { white-space: normal; font-size: 0.78rem; }
+    .pt-team.right { text-align: right; }
   }
 </style>
 </head>
@@ -841,8 +878,11 @@
     </div>
 
     <!-- Reglas -->
-    <div class="reglas-card">
-      <div class="reglas-header">📋 ¿Cómo funciona el Prode?</div>
+    <div class="reglas-card" id="reglas-card">
+      <div class="reglas-header" onclick="toggleReglas()">
+        📋 ¿Cómo funciona el Prode?
+        <button class="reglas-toggle" id="reglas-toggle-btn" tabindex="-1">Ocultar ▲</button>
+      </div>
       <div class="reglas-body">
         <div>
           <div class="reglas-subtitle">Las 6 boletas</div>
@@ -1008,6 +1048,23 @@
 </div><!-- end .wrapper -->
 
 <script>
+  // ── REGLAS TOGGLE ─────────────────────────────────────
+  function toggleReglas() {
+    const card = document.getElementById('reglas-card');
+    const btn = document.getElementById('reglas-toggle-btn');
+    const collapsed = card.classList.toggle('collapsed');
+    btn.textContent = collapsed ? 'Ver ▼' : 'Ocultar ▲';
+    localStorage.setItem('reglasCollapsed', collapsed ? '1' : '0');
+  }
+  (function() {
+    if (localStorage.getItem('reglasCollapsed') !== '0') {
+      const card = document.getElementById('reglas-card');
+      const btn = document.getElementById('reglas-toggle-btn');
+      card.classList.add('collapsed');
+      btn.textContent = 'Ver ▼';
+    }
+  })();
+
   // ── CONFIGURACIÓN ──────────────────────────────────────
   const API_URL = 'https://script.google.com/macros/s/AKfycbykJ4Vjuc-vPdrrv-EbY4J-Uzd7vFBn867ty7_RBMzY9rXG3xpzW8WiA2SlCGHduWSm/exec'; // Reemplazá con tu URL del Apps Script
 

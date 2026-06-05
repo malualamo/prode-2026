@@ -315,74 +315,65 @@
   }
 
   /* ── RANKING ── */
-  .ranking-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-  }
-  .ranking-item {
+  .ranking-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
     background: var(--card-bg);
     border: 2px solid var(--border);
     border-radius: 16px;
-    padding: 1rem 1.25rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    animation: slideIn 0.4s ease both;
-    transition: transform 0.2s, box-shadow 0.2s;
+    overflow: hidden;
     box-shadow: var(--shadow);
+    animation: fadeIn 0.4s ease both;
   }
-  .ranking-item:hover {
-    transform: translateX(5px);
-    box-shadow: var(--shadow-hover);
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
   }
-  .ranking-item.top1 {
-    border-color: var(--sun);
-    background: rgba(246,180,14,0.07);
-  }
-  .ranking-item.top2 { border-color: rgba(180,180,180,0.6); }
-  .ranking-item.top3 { border-color: rgba(176,107,50,0.5); }
-  @keyframes slideIn {
-    from { opacity: 0; transform: translateX(-16px); }
-    to { opacity: 1; transform: translateX(0); }
-  }
-  .rank-pos {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.6rem;
-    width: 2.2rem;
-    text-align: center;
-    color: var(--text-soft);
-    flex-shrink: 0;
-  }
-  .top1 .rank-pos { color: var(--sun-dark); }
-  .top2 .rank-pos { color: #a0a0a0; }
-  .top3 .rank-pos { color: #b06b32; }
-  .rank-medal { font-size: 1.4rem; }
-  .rank-name {
-    flex: 1;
-    font-weight: 900;
-    font-size: 1.05rem;
-    color: var(--text);
-  }
-  .rank-pts {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.8rem;
-    color: var(--celeste-dark);
-    letter-spacing: 0.05em;
-  }
-  .rank-pts-label {
+  .ranking-table thead tr { background: var(--celeste-pale); }
+  .ranking-table th {
     font-size: 0.65rem;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: var(--text-soft);
-    text-align: right;
+    padding: 0.55rem 0.75rem;
+    border-bottom: 2px solid var(--celeste-light);
+    text-align: center;
+    white-space: nowrap;
   }
-  .rank-detail {
-    font-size: 0.78rem;
-    font-weight: 700;
+  .ranking-table th:nth-child(2) { text-align: left; }
+  .ranking-table td {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--celeste-pale);
+    text-align: center;
+    vertical-align: middle;
+  }
+  .ranking-table tbody tr:last-child td { border-bottom: none; }
+  .ranking-table tbody tr { transition: background 0.15s; }
+  .ranking-table tbody tr:hover { background: var(--celeste-pale); }
+  .ranking-table tbody tr.top1 { background: rgba(246,180,14,0.08); }
+  .ranking-table tbody tr.top1:hover { background: rgba(246,180,14,0.14); }
+  .ranking-table tbody tr.top2 { background: rgba(180,180,180,0.06); }
+  .ranking-table tbody tr.top3 { background: rgba(176,107,50,0.06); }
+  .rank-pos {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
     color: var(--text-soft);
+    width: 2rem;
   }
+  .top1 .rank-pos { color: var(--sun-dark); }
+  .top2 .rank-pos { color: #a0a0a0; }
+  .top3 .rank-pos { color: #b06b32; }
+  .rank-name { font-weight: 900; font-size: 0.95rem; color: var(--text); text-align: left !important; }
+  .rank-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    letter-spacing: 0.05em;
+  }
+  .rank-num.exactos { color: var(--celeste-dark); }
+  .rank-num.parciales { color: var(--sun-dark); }
+  .rank-num.puntos { color: var(--celeste-dark); font-size: 1.4rem; }
 
   /* ── PARTIDOS ── */
   .partidos-grid {
@@ -462,53 +453,121 @@
   .partido-card:not(.jugado) .score-pending { display: block; }
   .partido-card:not(.jugado) .partido-score { display: none; }
 
-  /* ── PREDICCIONES ── */
-  .pred-tabs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    margin-bottom: 1rem;
+  /* ── TABLA COMPACTA (partidos fase 2 + predicciones) ── */
+  .partidos-table-wrap {
+    background: var(--card-bg);
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    animation: fadeIn 0.4s ease both;
   }
-  .pred-tab {
-    background: var(--celeste-pale);
-    border: 2px solid var(--celeste-light);
-    border-radius: 100px;
-    padding: 0.35rem 0.9rem;
-    font-size: 0.82rem;
-    font-weight: 800;
-    cursor: pointer;
-    transition: all 0.2s;
-    color: var(--text-mid);
-  }
-  .pred-tab:hover, .pred-tab.active {
-    background: var(--celeste);
-    border-color: var(--celeste-dark);
-    color: white;
-  }
-  .pred-panel { display: none; }
-  .pred-panel.active { display: block; }
-  .pred-table {
+  .partidos-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.84rem;
+    font-size: 0.82rem;
   }
-  .pred-table th {
-    font-size: 0.68rem;
+  .partidos-table thead tr { background: var(--celeste-pale); }
+  .partidos-table th {
+    font-size: 0.62rem;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: var(--text-soft);
-    text-align: left;
-    padding: 0.5rem 0.6rem;
+    padding: 0.45rem 0.7rem;
     border-bottom: 2px solid var(--celeste-light);
+    text-align: center;
+    white-space: nowrap;
   }
-  .pred-table td {
-    padding: 0.5rem 0.6rem;
+  .partidos-table td {
+    padding: 0.38rem 0.7rem;
     border-bottom: 1px solid var(--celeste-pale);
-    color: var(--text);
-    font-weight: 700;
+    vertical-align: middle;
   }
-  .pred-table tr:last-child td { border-bottom: none; }
+  .partidos-table tbody tr:last-child td { border-bottom: none; }
+  .partidos-table tbody tr { transition: background 0.12s; }
+  .partidos-table tbody tr:hover { background: var(--celeste-pale); }
+  .pt-code {
+    font-size: 0.6rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    color: var(--text-soft);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .pt-team { font-weight: 900; font-size: 0.82rem; color: var(--text); white-space: nowrap; }
+  .pt-team.right { text-align: right; }
+  .pt-score {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
+  }
+  .pt-score .sb {
+    background: var(--celeste);
+    border-radius: 5px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    color: white;
+  }
+  .pt-score .ss { font-weight: 800; color: var(--text-soft); font-size: 0.8rem; }
+  .pt-pending {
+    font-size: 0.6rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    color: var(--celeste-light);
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  /* ── PREDICCIONES ── */
+  .pred-select-wrap {
+    position: relative;
+    margin-bottom: 1rem;
+    display: inline-block;
+    width: 100%;
+    max-width: 280px;
+  }
+  .pred-select-wrap::after {
+    content: '▾';
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--celeste-dark);
+    font-size: 0.9rem;
+    pointer-events: none;
+    font-weight: 900;
+  }
+  .pred-select {
+    width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
+    background: var(--card-bg);
+    border: 2px solid var(--celeste-light);
+    border-radius: 12px;
+    padding: 0.6rem 2.5rem 0.6rem 1rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: var(--text);
+    cursor: pointer;
+    outline: none;
+    box-shadow: var(--shadow);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .pred-select:focus, .pred-select:hover {
+    border-color: var(--celeste-dark);
+    box-shadow: var(--shadow-hover);
+  }
+  .pred-panel { display: none; }
+  .pred-panel.active { display: block; }
+  .pred-table td { color: var(--text); font-weight: 700; }
   .pred-score {
     display: inline-flex;
     gap: 0.2rem;
@@ -524,8 +583,17 @@
     color: var(--celeste-dark);
   }
   .pred-score .vs { color: var(--text-soft); font-size: 0.7rem; font-weight: 700; }
-  td.exacto { background: rgba(116,172,223,0.12); }
-  td.ganador { background: rgba(246,180,14,0.1); }
+  .pts-badge {
+    display: inline-block;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.04em;
+    padding: 1px 7px;
+    border-radius: 6px;
+  }
+  .pts-badge.pts3 { background: rgba(34,197,94,0.15); color: #16a34a; }
+  .pts-badge.pts1 { background: rgba(246,180,14,0.18); color: var(--sun-dark); }
+  .pts-badge.pts0 { background: rgba(0,0,0,0.06); color: var(--text-soft); }
 
   /* ── AVISOS ── */
   .avisos-section {
@@ -836,16 +904,7 @@
           <div class="section-icon">🥇</div>
           <span class="section-title">Ranking</span>
         </div>
-        <div class="ranking-list" id="ranking-list"></div>
-      </div>
-
-      <!-- Partidos -->
-      <div class="section">
-        <div class="section-header">
-          <div class="section-icon">⚽</div>
-          <span class="section-title">Resultados de partidos</span>
-        </div>
-        <div class="partidos-grid" id="partidos-grid-f2"></div>
+        <div id="ranking-list"></div>
       </div>
 
       <!-- Predicciones -->
@@ -854,8 +913,19 @@
           <div class="section-icon">📋</div>
           <span class="section-title">Predicciones por jugador</span>
         </div>
-        <div class="pred-tabs" id="pred-tabs"></div>
+        <div class="pred-select-wrap">
+          <select class="pred-select" id="pred-select" onchange="switchTab(this.value)"></select>
+        </div>
         <div id="pred-panels"></div>
+      </div>
+
+      <!-- Partidos -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-icon">⚽</div>
+          <span class="section-title">Resultados de partidos</span>
+        </div>
+        <div id="partidos-grid-f2"></div>
       </div>
 
     </div>
@@ -866,7 +936,7 @@
         <div class="section-icon">📅</div>
         <span class="section-title">Partidos</span>
       </div>
-      <div class="partidos-grid" id="partidos-grid-f1"></div>
+      <div id="partidos-grid-f1"></div>
     </div>
 
   </div><!-- end #content -->
@@ -892,109 +962,105 @@
   // ── RENDER PARTIDOS ────────────────────────────────────
   function renderPartidos(partidos, containerId) {
     const container = document.getElementById(containerId);
-    container.innerHTML = partidos.map((p, i) => {
-      let localDisplay = p.local;
-      let visitanteDisplay = p.visitante;
-      if (p.descripcion) {
-        const parts = p.descripcion.split(' vs ');
-        if (parts.length === 2) {
-          localDisplay = parts[0].trim();
-          visitanteDisplay = parts[1].trim();
-        }
-      }
-      return `
-      <div class="partido-card ${p.jugado ? 'jugado' : ''}" style="animation-delay:${i*0.03}s">
-        <div class="partido-code">${p.codigo}</div>
-        <div class="partido-teams">
-          <div class="partido-team" style="text-align:right">${localDisplay}</div>
-          ${p.jugado ? `
-            <div class="partido-score">
-              <div class="score-box">${p.golesLocal}</div>
-              <span class="score-sep">-</span>
-              <div class="score-box">${p.golesVisitante}</div>
-            </div>
-          ` : ''}
-          <div class="partido-team" style="text-align:left">${visitanteDisplay}</div>
-        </div>
-        <div class="score-pending">Pendiente</div>
-      </div>
-    `;
+    const rows = partidos.map(p => {
+      const scoreCell = p.jugado
+        ? `<div class="pt-score"><div class="sb">${p.golesLocal}</div><span class="ss">-</span><div class="sb">${p.golesVisitante}</div></div>`
+        : `<div class="pt-pending">— pend —</div>`;
+      return `<tr class="${p.jugado ? 'jugado' : ''}">
+        <td class="pt-code">${p.codigo}</td>
+        <td class="pt-team right">${p.local}</td>
+        <td style="width:72px">${scoreCell}</td>
+        <td class="pt-team">${p.visitante}</td>
+      </tr>`;
     }).join('');
+    container.innerHTML = `
+      <div class="partidos-table-wrap">
+        <table class="partidos-table">
+          <thead><tr>
+            <th>Cód.</th><th style="text-align:right">Local</th><th>Score</th><th>Visitante</th>
+          </tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>`;
   }
 
   // ── RENDER RANKING ─────────────────────────────────────
   function renderRanking(ranking) {
     const medals = ['🥇','🥈','🥉'];
-    document.getElementById('ranking-list').innerHTML = ranking.map((j, i) => `
-      <div class="ranking-item ${i < 3 ? 'top'+(i+1) : ''}" style="animation-delay:${i*0.05}s">
-        <div class="rank-pos">${i < 3 ? medals[i] : (i+1)}</div>
-        <div class="rank-name">${j.apodo}</div>
-        <div>
-          <div class="rank-pts">${j.puntos}</div>
-          <div class="rank-pts-label">pts</div>
-        </div>
-        <div class="rank-detail">
-          ${j.exactos} exactos · ${j.ganadores} ganadores
-        </div>
-      </div>
+    const rows = ranking.map((j, i) => `
+      <tr class="${i < 3 ? 'top'+(i+1) : ''}">
+        <td class="rank-pos">${i < 3 ? medals[i] : (i+1)}</td>
+        <td class="rank-name">${j.apodo}</td>
+        <td><span class="rank-num exactos">${j.exactos}</span></td>
+        <td><span class="rank-num parciales">${j.ganadores}</span></td>
+        <td><span class="rank-num puntos">${j.puntos}</span></td>
+      </tr>
     `).join('');
+    document.getElementById('ranking-list').innerHTML = `
+      <table class="ranking-table">
+        <thead><tr>
+          <th>#</th><th>Jugador</th><th>Exactos</th><th>Parciales</th><th>Puntos</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>`;
   }
 
   // ── RENDER PREDICCIONES ────────────────────────────────
   function renderPredicciones(predicciones, partidos) {
-    const tabsEl = document.getElementById('pred-tabs');
     const panelsEl = document.getElementById('pred-panels');
     const partidosMap = {};
     partidos.forEach(p => partidosMap[p.codigo] = p);
 
-    tabsEl.innerHTML = predicciones.map((j, i) => `
-      <div class="pred-tab ${i===0?'active':''}" onclick="switchTab(${i})">${j.apodo}</div>
-    `).join('');
+    document.getElementById('pred-select').innerHTML = predicciones.map((j, i) =>
+      `<option value="${i}">${j.apodo}</option>`
+    ).join('');
 
     panelsEl.innerHTML = predicciones.map((j, idx) => {
       const codigos = Object.keys(j.predicciones);
       const rows = codigos.map(cod => {
         const pred = j.predicciones[cod];
+        const vals = Object.values(pred);
         const keys = Object.keys(pred);
-        const local = keys[0], visitante = keys[1];
-        const pL = pred[local], pV = pred[visitante];
+        const pL = vals[0], pV = vals[1];
         const partido = partidosMap[cod];
-        let cls = '';
+        let pts = null;
         if (partido && partido.jugado) {
-          if (pL === partido.golesLocal && pV === partido.golesVisitante) cls = 'exacto';
+          if (pL === partido.golesLocal && pV === partido.golesVisitante) pts = 3;
           else if (
             (pL > pV && partido.golesLocal > partido.golesVisitante) ||
             (pL < pV && partido.golesLocal < partido.golesVisitante) ||
             (pL === pV && partido.golesLocal === partido.golesVisitante)
-          ) cls = 'ganador';
+          ) pts = 1;
+          else pts = 0;
         }
+        const ptsCell = pts === null
+          ? `<td></td>`
+          : `<td style="text-align:center"><span class="pts-badge pts${pts}">${pts === 3 ? '+3' : pts === 1 ? '+1' : '0'}</span></td>`;
+        const equipos = `${keys[0].replace(/[🇦-🇿🏴]/gu,'').trim()} vs ${keys[1].replace(/[🇦-🇿🏴]/gu,'').trim()}`;
         return `<tr>
           <td>${cod}</td>
-          <td style="font-size:0.75rem; color:rgba(245,245,240,0.45)">${local.replace(/[🇦-🇿🏴]/gu,'').trim()} vs ${visitante.replace(/[🇦-🇿🏴]/gu,'').trim()}</td>
-          <td class="${cls}">
-            <span class="pred-score">
-              <span class="s">${pL ?? '?'}</span>
-              <span class="vs">-</span>
-              <span class="s">${pV ?? '?'}</span>
-            </span>
-          </td>
+          <td style="font-size:0.75rem; color:var(--text-soft)">${equipos}</td>
+          <td><span class="pred-score"><span class="s">${pL ?? '?'}</span><span class="vs">-</span><span class="s">${pV ?? '?'}</span></span></td>
+          ${ptsCell}
         </tr>`;
       }).join('');
       return `
         <div class="pred-panel ${idx===0?'active':''}" id="pred-panel-${idx}">
-          <table class="pred-table">
-            <thead><tr>
-              <th>Partido</th><th>Equipos</th><th>Predicción</th>
-            </tr></thead>
-            <tbody>${rows}</tbody>
-          </table>
+          <div class="partidos-table-wrap">
+            <table class="partidos-table pred-table">
+              <thead><tr>
+                <th>Partido</th><th style="text-align:left">Equipos</th><th>Predicción</th><th>Puntos</th>
+              </tr></thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </div>
         </div>`;
     }).join('');
   }
 
   window.switchTab = function(idx) {
-    document.querySelectorAll('.pred-tab').forEach((t,i) => t.classList.toggle('active', i===idx));
-    document.querySelectorAll('.pred-panel').forEach((p,i) => p.classList.toggle('active', i===idx));
+    idx = parseInt(idx);
+    document.querySelectorAll('.pred-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
   };
 
   // ── MAIN ───────────────────────────────────────────────

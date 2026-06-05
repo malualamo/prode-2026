@@ -577,6 +577,93 @@
     border: 2px solid var(--celeste-dark);
   }
 
+  /* ── AVISO URGENTE ── */
+  .aviso-urgente {
+    border-color: var(--sun-dark) !important;
+    border-left-color: var(--sun) !important;
+    background: rgba(246,180,14,0.08) !important;
+    font-size: 1rem !important;
+  }
+
+  /* ── REGLAS CARD ── */
+  .reglas-card {
+    background: var(--white);
+    border: 2px solid var(--celeste-light);
+    border-radius: 18px;
+    padding: 1.25rem 1.4rem;
+    margin-bottom: 0.75rem;
+    box-shadow: var(--shadow);
+  }
+  .reglas-header {
+    font-size: 0.9rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--celeste-dark);
+    margin-bottom: 1rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 2px solid var(--celeste-light);
+  }
+  .reglas-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+    margin-bottom: 0.75rem;
+  }
+  .reglas-subtitle {
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-soft);
+    margin-bottom: 0.4rem;
+    margin-top: 0.75rem;
+  }
+  .reglas-subtitle:first-child { margin-top: 0; }
+  .reglas-list {
+    list-style: none;
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    gap: 0.22rem;
+  }
+  .reglas-list li::before { content: '→ '; color: var(--celeste); }
+  .reglas-pts {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .pt-item {
+    font-size: 0.82rem;
+    font-weight: 800;
+    border-radius: 8px;
+    padding: 0.35rem 0.7rem;
+  }
+  .pt-item.exacto { background: rgba(116,172,223,0.13); color: var(--celeste-dark); }
+  .pt-item.parcial { background: rgba(246,180,14,0.12); color: var(--sun-dark); }
+  .reglas-text {
+    font-size: 0.83rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .reglas-faqs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.4rem;
+    font-size: 0.81rem;
+    font-weight: 700;
+    color: var(--text-mid);
+    border-top: 1px solid var(--celeste-pale);
+    padding-top: 0.65rem;
+  }
+
+  @media (max-width: 500px) {
+    .reglas-body { grid-template-columns: 1fr; }
+  }
+
   /* ── FOOTER ── */
   footer {
     text-align: center;
@@ -619,6 +706,41 @@
 
   <!-- ── AVISOS Y LINKS ── -->
   <div class="avisos-section">
+
+    <!-- Deadline -->
+    <div class="aviso-msg aviso-urgente">
+      ⏰ <strong>TIEMPO LÍMITE BOLETA 1:</strong> 10 de junio a las 23:59hs
+    </div>
+
+    <!-- Reglas -->
+    <div class="reglas-card">
+      <div class="reglas-header">📋 ¿Cómo funciona el Prode?</div>
+      <div class="reglas-body">
+        <div>
+          <div class="reglas-subtitle">Las 6 boletas</div>
+          <ul class="reglas-list">
+            <li><strong>Boleta 1:</strong> Fase de grupos (parte 1)</li>
+            <li><strong>Boleta 2:</strong> Fase de grupos (parte 2)</li>
+            <li><strong>Boleta 3:</strong> Fase de grupos (parte 3)</li>
+            <li><strong>Boleta 4:</strong> 16avos</li>
+            <li><strong>Boleta 5:</strong> 8avos</li>
+            <li><strong>Boleta Final:</strong> 4tos · Semis · Final · 3er puesto</li>
+          </ul>
+        </div>
+        <div>
+          <div class="reglas-subtitle">Puntaje</div>
+          <div class="reglas-pts">
+            <div class="pt-item exacto">+3 pts — Resultado exacto</div>
+            <div class="pt-item parcial">+1 pt — Ganador correcto</div>
+          </div>
+          <div class="reglas-subtitle">Precio</div>
+          <p class="reglas-text"><strong>$5.000</strong> por boleta &nbsp;·&nbsp; Podés comprar más de una &nbsp;·&nbsp; Cada boleta es independiente</p>
+          <div class="reglas-subtitle">Premios</div>
+          <p class="reglas-text"><strong>85%</strong> del pozo al ganador de la boleta<br><strong>15%</strong> se acumula para la Boleta Final</p>
+        </div>
+      </div>
+    </div>
+
     <div class="links-row">
       <a class="link-btn whatsapp" href="https://chat.whatsapp.com/GwgPOBZbyf95LiB99gbLH3?mode=gi_t" target="_blank">
         💬 Grupo de WhatsApp

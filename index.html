@@ -332,19 +332,19 @@
   }
   .ranking-table thead tr { background: var(--celeste-pale); }
   .ranking-table th {
-    font-size: 0.65rem;
+    font-size: 0.58rem;
     font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.08em;
     color: var(--text-soft);
-    padding: 0.55rem 0.75rem;
+    padding: 0.3rem 0.45rem;
     border-bottom: 2px solid var(--celeste-light);
     text-align: center;
     white-space: nowrap;
   }
   .ranking-table th:nth-child(2) { text-align: left; }
   .ranking-table td {
-    padding: 0.5rem 0.75rem;
+    padding: 0.2rem 0.45rem;
     border-bottom: 1px solid var(--celeste-pale);
     text-align: center;
     vertical-align: middle;
@@ -358,22 +358,22 @@
   .ranking-table tbody tr.top3 { background: rgba(176,107,50,0.06); }
   .rank-pos {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.3rem;
+    font-size: 0.9rem;
     color: var(--text-soft);
-    width: 2rem;
+    width: 1.5rem;
   }
   .top1 .rank-pos { color: var(--sun-dark); }
   .top2 .rank-pos { color: #a0a0a0; }
   .top3 .rank-pos { color: #b06b32; }
-  .rank-name { font-weight: 900; font-size: 0.95rem; color: var(--text); text-align: left !important; }
+  .rank-name { font-weight: 800; font-size: 0.8rem; color: var(--text); text-align: left !important; }
   .rank-num {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.2rem;
+    font-size: 0.95rem;
     letter-spacing: 0.05em;
   }
   .rank-num.exactos { color: var(--celeste-dark); }
   .rank-num.parciales { color: var(--sun-dark); }
-  .rank-num.puntos { color: var(--celeste-dark); font-size: 1.4rem; }
+  .rank-num.puntos { color: var(--celeste-dark); font-size: 1.05rem; }
 
   /* ── PARTIDOS ── */
   .partidos-grid {
@@ -469,18 +469,18 @@
   }
   .partidos-table thead tr { background: var(--celeste-pale); }
   .partidos-table th {
-    font-size: 0.62rem;
+    font-size: 0.58rem;
     font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.08em;
     color: var(--text-soft);
-    padding: 0.45rem 0.7rem;
+    padding: 0.28rem 0.5rem;
     border-bottom: 2px solid var(--celeste-light);
     text-align: center;
     white-space: nowrap;
   }
   .partidos-table td {
-    padding: 0.38rem 0.7rem;
+    padding: 0.18rem 0.5rem;
     border-bottom: 1px solid var(--celeste-pale);
     vertical-align: middle;
   }
@@ -570,30 +570,141 @@
   .pred-table td { color: var(--text); font-weight: 700; }
   .pred-score {
     display: inline-flex;
-    gap: 0.2rem;
+    gap: 0.15rem;
     align-items: center;
-    font-size: 0.92rem;
+    font-size: 0.75rem;
     font-weight: 900;
   }
   .pred-score .s {
     background: var(--celeste-pale);
-    border: 1.5px solid var(--celeste-light);
-    border-radius: 5px;
-    padding: 2px 7px;
+    border: 1px solid var(--celeste-light);
+    border-radius: 4px;
+    padding: 1px 5px;
     color: var(--celeste-dark);
   }
-  .pred-score .vs { color: var(--text-soft); font-size: 0.7rem; font-weight: 700; }
+  .pred-score .vs { color: var(--text-soft); font-size: 0.6rem; font-weight: 700; }
   .pts-badge {
     display: inline-block;
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 0.95rem;
+    font-size: 0.8rem;
     letter-spacing: 0.04em;
-    padding: 1px 7px;
-    border-radius: 6px;
+    padding: 1px 5px;
+    border-radius: 5px;
   }
   .pts-badge.pts3 { background: rgba(34,197,94,0.15); color: #16a34a; }
   .pts-badge.pts1 { background: rgba(246,180,14,0.18); color: var(--sun-dark); }
   .pts-badge.pts0 { background: rgba(0,0,0,0.06); color: var(--text-soft); }
+
+  /* ── PRÓXIMO PARTIDO ── */
+  .proximo-card {
+    background: var(--card-bg);
+    border: 2px solid var(--border);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    animation: fadeIn 0.4s ease both;
+  }
+  .proximo-match-header {
+    background: var(--celeste-pale);
+    border-bottom: 2px solid var(--celeste-light);
+    padding: 0.75rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+  .proximo-match-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.35rem;
+    letter-spacing: 0.07em;
+    color: var(--celeste-dark);
+  }
+  .proximo-hora {
+    margin-left: auto;
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: var(--text-soft);
+    background: white;
+    border: 1.5px solid var(--celeste-light);
+    border-radius: 8px;
+    padding: 0.2rem 0.65rem;
+  }
+  .proximo-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  .proximo-col {
+    padding: 0.9rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  .proximo-col.local { border-right: 1px solid var(--celeste-pale); }
+  .proximo-col.empate {
+    border-right: 1px solid var(--celeste-pale);
+    background: #f7fbff;
+  }
+  .proximo-col-title {
+    font-size: 0.6rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-soft);
+    margin-bottom: 0.1rem;
+  }
+  .proximo-team-label {
+    font-weight: 900;
+    font-size: 0.82rem;
+    color: var(--celeste-dark);
+    text-align: center;
+    margin-bottom: 0.15rem;
+  }
+  .proximo-flag {
+    font-size: 2.2rem;
+    line-height: 1;
+    margin-bottom: 0.1rem;
+  }
+  .proximo-count {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    color: var(--text-soft);
+    margin-bottom: 0.2rem;
+  }
+  .proximo-bettors {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem;
+    justify-content: center;
+  }
+  .proximo-bettor {
+    font-size: 0.42rem;
+    font-weight: 700;
+    color: var(--text);
+    background: var(--celeste-pale);
+    border: 1px solid var(--celeste-light);
+    border-radius: 20px;
+    padding: 0.07rem 0.35rem;
+    white-space: nowrap;
+  }
+  .proximo-col.empate .proximo-bettor {
+    background: white;
+  }
+  .proximo-empty {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--text-soft);
+    font-style: italic;
+    margin-top: 0.2rem;
+  }
+  @media (max-width: 600px) {
+    .proximo-match-title { font-size: 1.1rem; }
+    .proximo-bettor { font-size: 0.4rem; padding: 0.06rem 0.28rem; }
+    .proximo-count { font-size: 1.6rem; }
+    .proximo-col { padding: 0.7rem 0.4rem; }
+  }
 
   /* ── AVISOS ── */
   .avisos-section {
@@ -998,6 +1109,15 @@
     <!-- ── FASE 2 ── -->
     <div id="fase2-content" style="display:none;">
 
+      <!-- Próximo Partido -->
+      <div class="section" id="proximo-partido-section" style="display:none">
+        <div class="section-header">
+          <div class="section-icon">⏩</div>
+          <span class="section-title">Próximo partido</span>
+        </div>
+        <div id="proximo-partido-card"></div>
+      </div>
+
       <!-- Ranking -->
       <div class="section">
         <div class="section-header">
@@ -1180,6 +1300,70 @@
     document.querySelectorAll('.pred-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
   };
 
+  // ── PRÓXIMO PARTIDO ────────────────────────────────────
+  function renderProximoPartido(partidos, predicciones) {
+    const proximo = partidos.find(p => !p.jugado);
+    if (!proximo) return;
+
+    // Extrae solo los emojis de bandera del nombre de equipo
+    const getFlag = str => str.replace(/[a-zA-ZÀ-ÿ\s\d\(\)\.\,\-]/g, '').trim();
+    let flagLocal = '', flagVisitante = '';
+    for (const j of predicciones) {
+      const pred = j.predicciones[proximo.codigo];
+      if (pred) {
+        const keys = Object.keys(pred);
+        flagLocal = getFlag(keys[0]);
+        flagVisitante = getFlag(keys[1]);
+        break;
+      }
+    }
+
+    const bets = { local: [], empate: [], visitante: [] };
+    predicciones.forEach(j => {
+      const pred = j.predicciones[proximo.codigo];
+      if (!pred) return;
+      const vals = Object.values(pred);
+      const pL = vals[0], pV = vals[1];
+      if (pL == null || pV == null) return;
+      if (pL > pV) bets.local.push(j.apodo);
+      else if (pL < pV) bets.visitante.push(j.apodo);
+      else bets.empate.push(j.apodo);
+    });
+
+    const makeNames = (arr) => arr.length === 0
+      ? '<div class="proximo-empty">Nadie</div>'
+      : `<div class="proximo-bettors">${arr.map(n => `<span class="proximo-bettor">${n}</span>`).join('')}</div>`;
+
+    const horaStr = proximo.hora ? `<span class="proximo-hora">⏰ ${proximo.hora}</span>` : '';
+
+    document.getElementById('proximo-partido-card').innerHTML = `
+      <div class="proximo-card">
+        <div class="proximo-match-header">
+          <div class="proximo-match-title">${proximo.local} vs ${proximo.visitante}</div>
+          ${horaStr}
+        </div>
+        <div class="proximo-split">
+          <div class="proximo-col local">
+            <div class="proximo-col-title">${proximo.local}</div>
+            <div class="proximo-flag">${flagLocal || proximo.local}</div>
+            ${makeNames(bets.local)}
+          </div>
+          <div class="proximo-col empate">
+            <div class="proximo-col-title">Empate</div>
+            <div class="proximo-count">${bets.empate.length}</div>
+            ${makeNames(bets.empate)}
+          </div>
+          <div class="proximo-col visitante">
+            <div class="proximo-col-title">${proximo.visitante}</div>
+            <div class="proximo-flag">${flagVisitante || proximo.visitante}</div>
+            ${makeNames(bets.visitante)}
+          </div>
+        </div>
+      </div>`;
+
+    document.getElementById('proximo-partido-section').style.display = 'block';
+  }
+
   // ── MAIN ───────────────────────────────────────────────
   async function init() {
     try {
@@ -1221,6 +1405,7 @@
         renderRanking(ranking);
         renderPartidos(partidos, 'partidos-grid-f2');
         renderPredicciones(predicciones, partidos);
+        renderProximoPartido(partidos, predicciones);
       }
 
       document.getElementById('loading').style.display = 'none';

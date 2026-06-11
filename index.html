@@ -977,14 +977,14 @@
     </div>
     <h1>Prode Mundial</h1>
     <h1>2026</h1>
-    <p class="subtitle">⚽ COMPLETEN LA BOLETA!!!!! ⚽</p>
+    <p class="subtitle"> si quieren agregar algo a la página me chiflan </p>
   </header>
 
   <!-- ── AVISOS Y LINKS ── -->
   <div class="avisos-section">
 
     <!-- Deadline -->
-    <div class="aviso-msg aviso-urgente">
+    <div class="aviso-msg aviso-urgente" id="aviso-deadline">
       ⏰ <strong>TIEMPO LÍMITE BOLETA 1:</strong> 10 de junio a las 23:59hs
     </div>
 
@@ -1020,7 +1020,7 @@
       </div>
     </div>
 
-    <div class="links-row">
+    <div class="links-row" id="links-row">
       <a class="link-btn whatsapp" href="https://chat.whatsapp.com/GwgPOBZbyf95LiB99gbLH3?mode=gi_t" target="_blank">
         💬 Grupo de WhatsApp
       </a>
@@ -1043,7 +1043,7 @@
   <div id="content">
 
     <!-- Phase badge -->
-    <div style="text-align:center; margin-bottom:1.5rem;">
+    <div style="text-align:center; margin-bottom:1.5rem;" id="phase-badge-container">
       <span class="phase-badge" id="phase-badge">
         <span class="phase-dot"></span>
         <span id="phase-text">Cargando...</span>
@@ -1350,7 +1350,7 @@
           </div>
           <div class="proximo-col empate">
             <div class="proximo-col-title">Empate</div>
-            <div class="proximo-count">${bets.empate.length}</div>
+            <div class="proximo-count">-</div>
             ${makeNames(bets.empate)}
           </div>
           <div class="proximo-col visitante">
@@ -1397,6 +1397,9 @@
         document.getElementById('fase1-content').style.display = 'none';
         document.getElementById('fase2-content').style.display = 'block';
         document.getElementById('partidos-section-f1').style.display = 'none';
+        document.getElementById('aviso-deadline').style.display = 'none';
+        document.getElementById('links-row').style.display = 'none';
+        document.getElementById('phase-badge-container').style.display = 'none';
 
         const [ranking, predicciones] = await Promise.all([
           api('ranking'),

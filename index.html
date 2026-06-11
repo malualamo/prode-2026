@@ -505,17 +505,17 @@
   }
   .pt-score .sb {
     background: var(--celeste);
-    border-radius: 5px;
-    width: 24px;
-    height: 24px;
+    border-radius: 4px;
+    width: 16px;
+    height: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 1rem;
+    font-size: 0.72rem;
     color: white;
   }
-  .pt-score .ss { font-weight: 800; color: var(--text-soft); font-size: 0.8rem; }
+  .pt-score .ss { font-weight: 800; color: var(--text-soft); font-size: 0.65rem; }
   .pt-pending {
     font-size: 0.6rem;
     font-weight: 800;
@@ -523,6 +523,13 @@
     color: var(--celeste-light);
     text-transform: uppercase;
     text-align: center;
+  }
+  .pt-fecha {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--text-soft);
+    white-space: nowrap;
+    text-align: right;
   }
 
   /* ── PREDICCIONES ── */
@@ -629,6 +636,15 @@
     border-radius: 8px;
     padding: 0.2rem 0.65rem;
   }
+  .proximo-countdown-banner {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--text-soft);
+    text-align: center;
+    margin-bottom: 0.75rem;
+    white-space: nowrap;
+  }
+  .proximo-countdown-banner:empty { display: none; }
   .proximo-split {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -1115,6 +1131,7 @@
           <div class="section-icon">⏩</div>
           <span class="section-title">Próximo partido</span>
         </div>
+        <div id="proximo-countdown" class="proximo-countdown-banner"></div>
         <div id="proximo-partido-card"></div>
       </div>
 
@@ -1186,8 +1203,7 @@
   })();
 
   // ── CONFIGURACIÓN ──────────────────────────────────────
-  const API_URL = 'https://script.google.com/macros/s/AKfycbykJ4Vjuc-vPdrrv-EbY4J-Uzd7vFBn867ty7_RBMzY9rXG3xpzW8WiA2SlCGHduWSm/exec'; // Reemplazá con tu URL del Apps Script
-
+  const API_URL = 'https://script.google.com/macros/s/AKfycbyCjomqAOPflzrKCOxSY_tQO7CaV4MzNHT5nnLZLExDTRf4QsvRIWm8W6EIqvex-B6L/exec'; // Reemplazá con tu URL del Apps Script
   const fmt = n => '$' + Math.round(n).toLocaleString('es-AR');
 
   // ── FETCH ──────────────────────────────────────────────
@@ -1208,13 +1224,14 @@
         <td class="pt-team right">${p.local}</td>
         <td style="width:72px">${scoreCell}</td>
         <td class="pt-team">${p.visitante}</td>
+        ${p.fechaHora ? `<td class="pt-fecha">${p.fechaHora.replace(/[()]/g, '').trim()}</td>` : '<td></td>'}
       </tr>`;
     }).join('');
     container.innerHTML = `
       <div class="partidos-table-wrap">
         <table class="partidos-table">
           <thead><tr>
-            <th>Cód.</th><th style="text-align:right">Local</th><th>Score</th><th>Visitante</th>
+            <th>Cód.</th><th style="text-align:right">Local</th><th>Score</th><th>Visitante</th><th style="text-align:right">Fecha</th>
           </tr></thead>
           <tbody>${rows}</tbody>
         </table>
@@ -1334,7 +1351,17 @@
       ? '<div class="proximo-empty">Nadie</div>'
       : `<div class="proximo-bettors">${arr.map(n => `<span class="proximo-bettor">${n}</span>`).join('')}</div>`;
 
-    const horaStr = proximo.hora ? `<span class="proximo-hora">⏰ ${proximo.hora}</span>` : '';
+    const horaStr = proximo.fechaHora ? `<span class="proximo-hora">${proximo.fechaHora.replace(/[()]/g, '').trim()}</span>` : '';
+
+    // Parsear fechaHora a Date para el contador
+    const meses = {Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
+    let partidoDate = null;
+    if (proximo.fechaHora) {
+      const m = proximo.fechaHora.match(/(\d{1,2})\s+(\w{3})\s*-\s*(\d{2}):(\d{2})/);
+      if (m) {
+        partidoDate = new Date(2026, meses[m[2]], parseInt(m[1]), parseInt(m[3]), parseInt(m[4]));
+      }
+    }
 
     document.getElementById('proximo-partido-card').innerHTML = `
       <div class="proximo-card">
@@ -1362,6 +1389,25 @@
       </div>`;
 
     document.getElementById('proximo-partido-section').style.display = 'block';
+
+    if (partidoDate) {
+      const el = document.getElementById('proximo-countdown');
+      const tick = () => {
+        const diff = partidoDate - Date.now();
+        if (!el) return;
+        if (diff <= 0) { el.textContent = '¡El partido está en curso!'; return; }
+        const h = Math.floor(diff / 3600000);
+        const m = Math.floor((diff % 3600000) / 60000);
+        const s = Math.floor((diff % 60000) / 1000);
+        const hStr = h > 0 ? `${h} hora${h !== 1 ? 's' : ''}` : '';
+        const mStr = m > 0 ? `${m} minuto${m !== 1 ? 's' : ''}` : '';
+        const sStr = `${s} segundo${s !== 1 ? 's' : ''}`;
+        const parts = [hStr, mStr, sStr].filter(Boolean);
+        el.textContent = `Faltan ${parts.slice(0, -1).join(', ')}${parts.length > 1 ? ' y ' : ''}${parts[parts.length - 1]} para el próximo partido`;
+      };
+      tick();
+      setInterval(tick, 1000);
+    }
   }
 
   // ── MAIN ───────────────────────────────────────────────

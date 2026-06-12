@@ -374,6 +374,25 @@
   .rank-num.exactos { color: var(--celeste-dark); }
   .rank-num.parciales { color: var(--sun-dark); }
   .rank-num.puntos { color: var(--celeste-dark); font-size: 1.05rem; }
+  /* ── COLUMNA PREDICCIÓN PRÓXIMO PARTIDO ── */
+  .rank-pred-th {
+    background: #eef2f6 !important;
+    color: #a0b4c5 !important;
+    font-size: 0.5rem !important;
+    line-height: 1.3;
+    white-space: normal !important;
+    border-left: 1px solid #dce8f0;
+  }
+  .rank-pred-cell {
+    background: #f4f7fa;
+    border-left: 1px solid #dce8f0;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.88rem;
+    letter-spacing: 0.05em;
+    color: #a0b4c5;
+    text-align: center;
+  }
+  .ranking-table tbody tr:hover .rank-pred-cell { background: #eaeff5; }
 
   /* ── PARTIDOS ── */
   .partidos-grid {
@@ -1239,7 +1258,20 @@
   }
 
   // ── RENDER RANKING ─────────────────────────────────────
-  function renderRanking(ranking) {
+  function renderRanking(ranking, partidos, predicciones) {
+    const proximo = partidos ? partidos.find(p => !p.jugado) : null;
+    const predMap = {};
+    if (proximo && predicciones) {
+      predicciones.forEach(j => {
+        const pred = j.predicciones[proximo.codigo];
+        if (pred) {
+          const vals = Object.values(pred);
+          predMap[j.apodo] = `${vals[0] ?? '?'}-${vals[1] ?? '?'}`;
+        }
+      });
+    }
+    const showProximo = !!(proximo && predicciones);
+
     const medals = ['🥇','🥈','🥉'];
     const rows = ranking.map((j, i) => `
       <tr class="${i < 3 ? 'top'+(i+1) : ''}">
@@ -1248,12 +1280,20 @@
         <td><span class="rank-num exactos">${j.exactos}</span></td>
         <td><span class="rank-num parciales">${j.ganadores}</span></td>
         <td><span class="rank-num puntos">${j.puntos}</span></td>
+        ${showProximo ? `<td class="rank-pred-cell">${predMap[j.apodo] || '—'}</td>` : ''}
       </tr>
     `).join('');
+
+    const abbr = s => s.replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, '').trim().slice(0, 3).toUpperCase();
+    const predHeader = showProximo
+      ? `<th class="rank-pred-th">${abbr(proximo.local)}<br><span style="font-size:0.42rem;opacity:0.7">vs</span><br>${abbr(proximo.visitante)}</th>`
+      : '';
+
     document.getElementById('ranking-list').innerHTML = `
       <table class="ranking-table">
         <thead><tr>
           <th>#</th><th>Jugador</th><th>Exactos</th><th>Parciales</th><th>Puntos</th>
+          ${predHeader}
         </tr></thead>
         <tbody>${rows}</tbody>
       </table>`;
@@ -1451,7 +1491,7 @@
           api('ranking'),
           api('predicciones')
         ]);
-        renderRanking(ranking);
+        renderRanking(ranking, partidos, predicciones);
         renderPartidos(partidos, 'partidos-grid-f2');
         renderPredicciones(predicciones, partidos);
         renderProximoPartido(partidos, predicciones);

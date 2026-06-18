@@ -98,6 +98,38 @@
     letter-spacing: 0.02em;
   }
 
+  /* ── BOLETA TABS ── */
+  .boleta-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+  }
+  .boleta-tab {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.55rem 1.4rem;
+    border-radius: 100px;
+    border: 2px solid var(--celeste-light);
+    background: var(--white);
+    color: var(--text-mid);
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    transition: transform 0.15s, box-shadow 0.15s, background 0.15s, color 0.15s;
+  }
+  .boleta-tab:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+  }
+  .boleta-tab.active {
+    background: var(--celeste);
+    border-color: var(--celeste-dark);
+    color: white;
+  }
+
   /* ── LOADING ── */
   #loading {
     display: flex;
@@ -139,8 +171,33 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 0.75rem;
-    margin-bottom: 2rem;
+    margin-bottom: 0.6rem;
   }
+  .pozo-final-footnote {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1.75rem;
+  }
+  .pozo-final-footnote > * {
+    grid-column: 3;
+    text-align: center;
+  }
+  .pozo-final-label {
+    font-size: 0.62rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-soft);
+    margin-bottom: 0.15rem;
+  }
+  .pozo-final-detail {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--text-soft);
+    line-height: 1.3;
+  }
+  .pozo-final-footnote:has(.pozo-final-detail:empty) { display: none; }
   .stat-item {
     background: var(--card-bg);
     border: 2px solid var(--border);
@@ -935,8 +992,14 @@
     }
     .stats-bar {
       gap: 0.5rem;
+      margin-bottom: 0.4rem;
+    }
+    .pozo-final-footnote {
+      gap: 0.5rem;
       margin-bottom: 1.25rem;
     }
+    .pozo-final-label { font-size: 0.55rem; }
+    .pozo-final-detail { font-size: 0.6rem; }
     .stat-item {
       padding: 0.75rem 0.4rem;
       border-radius: 14px;
@@ -972,6 +1035,8 @@
     .aviso-urgente {
       font-size: 0.9rem !important;
     }
+    .boleta-tabs { gap: 0.4rem; margin-bottom: 1rem; }
+    .boleta-tab { padding: 0.45rem 1rem; font-size: 0.78rem; }
     .pozo-grid { grid-template-columns: 1fr 1fr; gap: 0.75rem; }
     .pozo-card { padding: 1rem; }
     .pozo-amount { font-size: 1.8rem; }
@@ -1012,8 +1077,10 @@
     </div>
     <h1>Prode Mundial</h1>
     <h1>2026</h1>
-    <p class="subtitle"> si quieren agregar algo a la página me chiflan </p>
+    <p class="subtitle"> Felicitaciones Facu ganador boleta 1 !!!</p>
   </header>
+
+  <div class="boleta-tabs" id="boleta-tabs"></div>
 
   <div id="loading">
     <div class="loader"></div>
@@ -1079,7 +1146,7 @@
         <a class="link-btn whatsapp" href="https://chat.whatsapp.com/GwgPOBZbyf95LiB99gbLH3?mode=gi_t" target="_blank">
           💬 Grupo de WhatsApp
         </a>
-        <a class="link-btn boleta" href="https://forms.gle/LXh6nstzkptk3LWK7" target="_blank">
+        <a class="link-btn boleta" id="link-boleta-form" href="https://forms.gle/LXh6nstzkptk3LWK7" target="_blank">
           📝 Completar boleta
         </a>
       </div>
@@ -1099,6 +1166,10 @@
         <div class="stat-label">Pozo final</div>
         <div class="stat-value money" id="stat-final">—</div>
       </div>
+    </div>
+    <div class="pozo-final-footnote">
+      <div class="pozo-final-label">Boletas anteriores</div>
+      <div class="pozo-final-detail" id="pozo-final-detail"></div>
     </div>
 
     <!-- ── FASE 1 ── -->
@@ -1222,12 +1293,29 @@
   })();
 
   // ── CONFIGURACIÓN ──────────────────────────────────────
-  const API_URL = 'https://script.google.com/macros/s/AKfycbyCjomqAOPflzrKCOxSY_tQO7CaV4MzNHT5nnLZLExDTRf4QsvRIWm8W6EIqvex-B6L/exec'; // Reemplazá con tu URL del Apps Script
+  const BOLETAS = [
+    {
+      id: 2,
+      label: 'Boleta 2',
+      apiUrl: 'https://script.google.com/macros/s/AKfycbyEhLc-PrG8KhvzDEcZjUGmC_RfnL0Wt-kH6BZ4yUZvXy-ENkOT7-Xdxbnxtl95q3V0tw/exec',
+      formUrl: 'https://forms.gle/kPMP9dtTbML7z6Qz7',
+      deadline: '18 de junio a las 12:00hs'
+    },
+    {
+      id: 1,
+      label: 'Boleta 1',
+      apiUrl: 'https://script.google.com/macros/s/AKfycbyCjomqAOPflzrKCOxSY_tQO7CaV4MzNHT5nnLZLExDTRf4QsvRIWm8W6EIqvex-B6L/exec',
+      formUrl: 'https://forms.gle/LXh6nstzkptk3LWK7',
+      deadline: '10 de junio a las 23:59hs'
+    }
+  ];
+  let activeBoleta = BOLETAS[0];
+  const boletaCache = {};
   const fmt = n => '$' + Math.round(n).toLocaleString('es-AR');
 
   // ── FETCH ──────────────────────────────────────────────
-  async function api(action) {
-    const r = await fetch(`${API_URL}?action=${action}`);
+  async function api(apiUrl, action) {
+    const r = await fetch(`${apiUrl}?action=${action}`);
     return r.json();
   }
 
@@ -1305,9 +1393,15 @@
     const partidosMap = {};
     partidos.forEach(p => partidosMap[p.codigo] = p);
 
-    document.getElementById('pred-select').innerHTML = predicciones.map((j, i) =>
+    const selectEl = document.getElementById('pred-select');
+    const prevApodo = selectEl.options.length ? selectEl.options[selectEl.selectedIndex]?.textContent : null;
+    let activeIdx = predicciones.findIndex(j => j.apodo === prevApodo);
+    if (activeIdx === -1) activeIdx = 0;
+
+    selectEl.innerHTML = predicciones.map((j, i) =>
       `<option value="${i}">${j.apodo}</option>`
     ).join('');
+    selectEl.value = activeIdx;
 
     panelsEl.innerHTML = predicciones.map((j, idx) => {
       const codigos = Object.keys(j.predicciones);
@@ -1339,7 +1433,7 @@
         </tr>`;
       }).join('');
       return `
-        <div class="pred-panel ${idx===0?'active':''}" id="pred-panel-${idx}">
+        <div class="pred-panel ${idx===activeIdx?'active':''}" id="pred-panel-${idx}">
           <div class="partidos-table-wrap">
             <table class="partidos-table pred-table">
               <thead><tr>
@@ -1358,7 +1452,9 @@
   };
 
   // ── PRÓXIMO PARTIDO ────────────────────────────────────
+  let countdownTimer = null;
   function renderProximoPartido(partidos, predicciones) {
+    if (countdownTimer) { clearInterval(countdownTimer); countdownTimer = null; }
     const proximo = partidos.find(p => !p.jugado);
     if (!proximo) return;
 
@@ -1446,69 +1542,122 @@
         el.textContent = `Faltan ${parts.slice(0, -1).join(', ')}${parts.length > 1 ? ' y ' : ''}${parts[parts.length - 1]} para el próximo partido`;
       };
       tick();
-      setInterval(tick, 1000);
+      countdownTimer = setInterval(tick, 1000);
     }
   }
 
   // ── MAIN ───────────────────────────────────────────────
-  async function init() {
+  function renderBoleta(data, boleta) {
+    const { status, jugadores, partidos, ranking, predicciones } = data;
+    const fase = status.fase;
+
+    document.getElementById('aviso-deadline').innerHTML =
+      `⏰ <strong>TIEMPO LÍMITE ${boleta.label.toUpperCase()}:</strong> ${boleta.deadline}`;
+    document.getElementById('link-boleta-form').href = boleta.formUrl;
+
+    const badge = document.getElementById('phase-badge');
+    badge.className = `phase-badge fase${fase}`;
+    document.getElementById('phase-text').textContent = fase === 1
+      ? 'Fase 1 — Inscripción abierta'
+      : 'Fase 2 — Resultados desbloqueados';
+
+    document.getElementById('stat-jugadores').textContent = jugadores.totalJugadores;
+    document.getElementById('stat-boleta').textContent = fmt(jugadores.acumuladoBoleta);
+    document.getElementById('pozo-boleta').textContent = fmt(jugadores.acumuladoBoleta);
+
+    document.getElementById('jugadores-grid').innerHTML = jugadores.apodos
+      .map((a,i) => `<div class="jugador-chip" style="animation-delay:${i*0.05}s">⚽ ${a}</div>`)
+      .join('');
+
+    renderPartidos(partidos, 'partidos-grid-f1');
+
+    const fase2 = fase >= 2;
+    document.getElementById('fase1-content').style.display = fase2 ? 'none' : 'block';
+    document.getElementById('fase2-content').style.display = fase2 ? 'block' : 'none';
+    document.getElementById('partidos-section-f1').style.display = fase2 ? 'none' : 'block';
+    document.getElementById('aviso-deadline').style.display = fase2 ? 'none' : 'block';
+    document.getElementById('links-row').style.display = fase2 ? 'none' : 'flex';
+    document.getElementById('phase-badge-container').style.display = fase2 ? 'none' : 'block';
+
+    if (fase2 && ranking && predicciones) {
+      renderRanking(ranking, partidos, predicciones);
+      renderPartidos(partidos, 'partidos-grid-f2');
+      renderPredicciones(predicciones, partidos);
+      renderProximoPartido(partidos, predicciones);
+    }
+
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('error-msg').style.display = 'none';
+    document.getElementById('content').style.display = 'block';
+  }
+
+  async function loadBoleta(boleta) {
     try {
       const [status, jugadores, partidos] = await Promise.all([
-        api('status'),
-        api('jugadores'),
-        api('partidos')
+        api(boleta.apiUrl, 'status'),
+        api(boleta.apiUrl, 'jugadores'),
+        api(boleta.apiUrl, 'partidos')
       ]);
 
-      const fase = status.fase;
-      const badge = document.getElementById('phase-badge');
-      badge.className = `phase-badge fase${fase}`;
-      document.getElementById('phase-text').textContent = fase === 1
-        ? 'Fase 1 — Inscripción abierta'
-        : 'Fase 2 — Resultados desbloqueados';
-
-      document.getElementById('stat-jugadores').textContent = jugadores.totalJugadores;
-      document.getElementById('stat-boleta').textContent = fmt(jugadores.acumuladoBoleta);
-      document.getElementById('stat-final').textContent = fmt(jugadores.acumuladoFinal);
-
-      document.getElementById('pozo-boleta').textContent = fmt(jugadores.acumuladoBoleta);
-      document.getElementById('pozo-final').textContent = fmt(jugadores.acumuladoFinal);
-
-      document.getElementById('jugadores-grid').innerHTML = jugadores.apodos
-        .map((a,i) => `<div class="jugador-chip" style="animation-delay:${i*0.05}s">⚽ ${a}</div>`)
-        .join('');
-
-      renderPartidos(partidos, 'partidos-grid-f1');
-
-      if (fase >= 2) {
-        document.getElementById('fase1-content').style.display = 'none';
-        document.getElementById('fase2-content').style.display = 'block';
-        document.getElementById('partidos-section-f1').style.display = 'none';
-        document.getElementById('aviso-deadline').style.display = 'none';
-        document.getElementById('links-row').style.display = 'none';
-        document.getElementById('phase-badge-container').style.display = 'none';
-
-        const [ranking, predicciones] = await Promise.all([
-          api('ranking'),
-          api('predicciones')
+      let ranking = null, predicciones = null;
+      if (status.fase >= 2) {
+        [ranking, predicciones] = await Promise.all([
+          api(boleta.apiUrl, 'ranking'),
+          api(boleta.apiUrl, 'predicciones')
         ]);
-        renderRanking(ranking, partidos, predicciones);
-        renderPartidos(partidos, 'partidos-grid-f2');
-        renderPredicciones(predicciones, partidos);
-        renderProximoPartido(partidos, predicciones);
       }
 
-      document.getElementById('loading').style.display = 'none';
-      document.getElementById('error-msg').style.display = 'none';
-      document.getElementById('content').style.display = 'block';
+      boletaCache[boleta.id] = { status, jugadores, partidos, ranking, predicciones };
+      if (boleta.id === activeBoleta.id) renderBoleta(boletaCache[boleta.id], boleta);
 
     } catch(e) {
-      document.getElementById('loading').style.display = 'none';
-      document.getElementById('error-msg').style.display = 'block';
+      if (boleta.id === activeBoleta.id) {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('error-msg').style.display = 'block';
+      }
     }
   }
 
-  init();
-  setInterval(init, 60000); // refresca cada 60 segundos
+  // ── POZO FINAL (acumulado entre todas las boletas) ─────
+  async function refreshPozoFinal() {
+    const results = await Promise.all(BOLETAS.map(b =>
+      api(b.apiUrl, 'jugadores').then(j => ({ boleta: b, acumuladoFinal: j.acumuladoFinal })).catch(() => null)
+    ));
+    const validos = results.filter(Boolean);
+    const total = validos.reduce((sum, r) => sum + r.acumuladoFinal, 0);
+    const detalle = validos.map(r => `${r.boleta.label}: ${fmt(r.acumuladoFinal)}`).join(' + ');
+
+    document.getElementById('stat-final').textContent = fmt(total);
+    document.getElementById('pozo-final').textContent = fmt(total);
+    document.getElementById('pozo-final-detail').textContent = detalle;
+  }
+
+  function renderBoletaTabs() {
+    document.getElementById('boleta-tabs').innerHTML = BOLETAS.map(b =>
+      `<button class="boleta-tab ${b.id === activeBoleta.id ? 'active' : ''}" onclick="selectBoleta(${b.id})">${b.label}</button>`
+    ).join('');
+  }
+
+  window.selectBoleta = function(id) {
+    if (id === activeBoleta.id) return;
+    activeBoleta = BOLETAS.find(b => b.id === id);
+    renderBoletaTabs();
+
+    const cached = boletaCache[id];
+    if (cached) {
+      renderBoleta(cached, activeBoleta);
+    } else {
+      document.getElementById('content').style.display = 'none';
+      document.getElementById('error-msg').style.display = 'none';
+      document.getElementById('loading').style.display = 'flex';
+    }
+    loadBoleta(activeBoleta);
+  };
+
+  renderBoletaTabs();
+  loadBoleta(activeBoleta);
+  refreshPozoFinal();
+  setInterval(() => { loadBoleta(activeBoleta); refreshPozoFinal(); }, 60000); // refresca cada 60 segundos
 </script>
 </body>
 </html>

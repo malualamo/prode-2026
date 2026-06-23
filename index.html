@@ -679,6 +679,11 @@
   .pts-badge.pts0 { background: rgba(0,0,0,0.06); color: var(--text-soft); }
 
   /* ── PRÓXIMO PARTIDO ── */
+  .proximo-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+  }
   .proximo-card {
     background: var(--card-bg);
     border: 2px solid var(--border);
@@ -1077,7 +1082,7 @@
     </div>
     <h1>Prode Mundial</h1>
     <h1>2026</h1>
-    <p class="subtitle"> Felicitaciones Facu ganador boleta 1 !!!</p>
+    <p class="subtitle" id="header-mensaje"> Felicitaciones Facu ganador boleta 1 !!!</p>
   </header>
 
   <div class="boleta-tabs" id="boleta-tabs"></div>
@@ -1219,7 +1224,7 @@
       <div class="section" id="proximo-partido-section" style="display:none">
         <div class="section-header">
           <div class="section-icon">⏩</div>
-          <span class="section-title">Próximo partido</span>
+          <span class="section-title" id="proximo-partido-title">Próximo partido</span>
         </div>
         <div id="proximo-countdown" class="proximo-countdown-banner"></div>
         <div id="proximo-partido-card"></div>
@@ -1295,6 +1300,13 @@
   // ── CONFIGURACIÓN ──────────────────────────────────────
   const BOLETAS = [
     {
+      id: 3,
+      label: 'Boleta 3',
+      apiUrl: 'https://script.google.com/macros/s/AKfycbwMlcnN2XMskYEMwgCx2XD_am6IOn6k1GFtePp12d3BpeeCilJa-Dd8VVexhcupmRBOcA/exec',
+      formUrl: 'https://forms.gle/sn9TSpE5KH4uzh4XA',
+      deadline: '24 de junio a las 15:00hs'
+    },
+    {
       id: 2,
       label: 'Boleta 2',
       apiUrl: 'https://script.google.com/macros/s/AKfycbyEhLc-PrG8KhvzDEcZjUGmC_RfnL0Wt-kH6BZ4yUZvXy-ENkOT7-Xdxbnxtl95q3V0tw/exec',
@@ -1309,7 +1321,8 @@
       deadline: '10 de junio a las 23:59hs'
     }
   ];
-  let activeBoleta = BOLETAS[0];
+  // Los botones se muestran en orden 3-2-1, pero boleta 2 queda activa por defecto hasta que termine su último partido
+  let activeBoleta = BOLETAS.find(b => b.id === 2);
   const boletaCache = {};
   const fmt = n => '$' + Math.round(n).toLocaleString('es-AR');
 
@@ -1347,34 +1360,47 @@
 
   // ── RENDER RANKING ─────────────────────────────────────
   function renderRanking(ranking, partidos, predicciones) {
+    // Si varios partidos comparten fecha y hora (se juegan de a pares), se muestran todos juntos
     const proximo = partidos ? partidos.find(p => !p.jugado) : null;
-    const predMap = {};
-    if (proximo && predicciones) {
-      predicciones.forEach(j => {
-        const pred = j.predicciones[proximo.codigo];
-        if (pred) {
-          const vals = Object.values(pred);
-          predMap[j.apodo] = `${vals[0] ?? '?'}-${vals[1] ?? '?'}`;
-        }
-      });
-    }
-    const showProximo = !!(proximo && predicciones);
+    const proximos = proximo ? partidos.filter(p => !p.jugado && p.fechaHora === proximo.fechaHora) : [];
+    const showProximo = proximos.length > 0 && !!predicciones;
 
-    const medals = ['🥇','🥈','🥉'];
-    const rows = ranking.map((j, i) => `
-      <tr class="${i < 3 ? 'top'+(i+1) : ''}">
-        <td class="rank-pos">${i < 3 ? medals[i] : (i+1)}</td>
+    const predMaps = proximos.map(partido => {
+      const map = {};
+      if (predicciones) {
+        predicciones.forEach(j => {
+          const pred = j.predicciones[partido.codigo];
+          if (pred) {
+            const vals = Object.values(pred);
+            map[j.apodo] = `${vals[0] ?? '?'}-${vals[1] ?? '?'}`;
+          }
+        });
+      }
+      return map;
+    });
+
+    const medals = {1:'🥇',2:'🥈',3:'🥉'};
+    let prevPuntos = null, prevPos = 0;
+    const rows = ranking.map((j, i) => {
+      // Jugadores empatados en puntos comparten la misma posición (ranking estándar, salta números)
+      const pos = j.puntos === prevPuntos ? prevPos : i + 1;
+      prevPuntos = j.puntos;
+      prevPos = pos;
+      return `
+      <tr class="${pos <= 3 ? 'top'+pos : ''}">
+        <td class="rank-pos">${medals[pos] || pos}</td>
         <td class="rank-name">${j.apodo}</td>
         <td><span class="rank-num exactos">${j.exactos}</span></td>
         <td><span class="rank-num parciales">${j.ganadores}</span></td>
         <td><span class="rank-num puntos">${j.puntos}</span></td>
-        ${showProximo ? `<td class="rank-pred-cell">${predMap[j.apodo] || '—'}</td>` : ''}
+        ${showProximo ? predMaps.map(map => `<td class="rank-pred-cell">${map[j.apodo] || '—'}</td>`).join('') : ''}
       </tr>
-    `).join('');
+    `;
+    }).join('');
 
     const abbr = s => s.replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, '').trim().slice(0, 3).toUpperCase();
     const predHeader = showProximo
-      ? `<th class="rank-pred-th">${abbr(proximo.local)}<br><span style="font-size:0.42rem;opacity:0.7">vs</span><br>${abbr(proximo.visitante)}</th>`
+      ? proximos.map(partido => `<th class="rank-pred-th">${abbr(partido.local)}<br><span style="font-size:0.42rem;opacity:0.7">vs</span><br>${abbr(partido.visitante)}</th>`).join('')
       : '';
 
     document.getElementById('ranking-list').innerHTML = `
@@ -1451,45 +1477,81 @@
     document.querySelectorAll('.pred-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
   };
 
-  // ── PRÓXIMO PARTIDO ────────────────────────────────────
+  // ── PRÓXIMO PARTIDO (o partidos, si se juegan de a pares) ──
   let countdownTimer = null;
   function renderProximoPartido(partidos, predicciones) {
     if (countdownTimer) { clearInterval(countdownTimer); countdownTimer = null; }
     const proximo = partidos.find(p => !p.jugado);
     if (!proximo) return;
+    // Todos los partidos sin jugar que comparten fecha y hora con el próximo se muestran juntos
+    const proximos = partidos.filter(p => !p.jugado && p.fechaHora === proximo.fechaHora);
+    const esPlural = proximos.length > 1;
+
+    document.getElementById('proximo-partido-title').textContent =
+      esPlural ? 'Próximos partidos' : 'Próximo partido';
 
     // Extrae solo los emojis de bandera del nombre de equipo
     const getFlag = str => str.replace(/[a-zA-ZÀ-ÿ\s\d\(\)\.\,\-]/g, '').trim();
-    let flagLocal = '', flagVisitante = '';
-    for (const j of predicciones) {
-      const pred = j.predicciones[proximo.codigo];
-      if (pred) {
-        const keys = Object.keys(pred);
-        flagLocal = getFlag(keys[0]);
-        flagVisitante = getFlag(keys[1]);
-        break;
+
+    const cardsHtml = proximos.map(partido => {
+      // La descripción del partido siempre trae las banderas, a diferencia de las predicciones
+      // (que pueden faltar o tener un código distinto, ej. Bosnia como BOS vs BIH)
+      let flagLocal = '', flagVisitante = '';
+      const partes = partido.descripcion ? partido.descripcion.split(/\s+vs\s+/i) : [];
+      if (partes.length === 2) {
+        flagLocal = getFlag(partes[0]);
+        flagVisitante = getFlag(partes[1]);
       }
-    }
 
-    const bets = { local: [], empate: [], visitante: [] };
-    predicciones.forEach(j => {
-      const pred = j.predicciones[proximo.codigo];
-      if (!pred) return;
-      const vals = Object.values(pred);
-      const pL = vals[0], pV = vals[1];
-      if (pL == null || pV == null) return;
-      if (pL > pV) bets.local.push(j.apodo);
-      else if (pL < pV) bets.visitante.push(j.apodo);
-      else bets.empate.push(j.apodo);
-    });
+      const bets = { local: [], empate: [], visitante: [] };
+      predicciones.forEach(j => {
+        const pred = j.predicciones[partido.codigo];
+        if (!pred) return;
+        const vals = Object.values(pred);
+        const pL = vals[0], pV = vals[1];
+        if (pL == null || pV == null) return;
+        if (pL > pV) bets.local.push(j.apodo);
+        else if (pL < pV) bets.visitante.push(j.apodo);
+        else bets.empate.push(j.apodo);
+      });
 
-    const makeNames = (arr) => arr.length === 0
-      ? '<div class="proximo-empty">Nadie</div>'
-      : `<div class="proximo-bettors">${arr.map(n => `<span class="proximo-bettor">${n}</span>`).join('')}</div>`;
+      const makeNames = (arr) => arr.length === 0
+        ? '<div class="proximo-empty">Nadie</div>'
+        : `<div class="proximo-bettors">${arr.map(n => `<span class="proximo-bettor">${n}</span>`).join('')}</div>`;
 
-    const horaStr = proximo.fechaHora ? `<span class="proximo-hora">${proximo.fechaHora.replace(/[()]/g, '').trim()}</span>` : '';
+      const horaStr = partido.fechaHora ? `<span class="proximo-hora">${partido.fechaHora.replace(/[()]/g, '').trim()}</span>` : '';
 
-    // Parsear fechaHora a Date para el contador
+      return `
+        <div class="proximo-card">
+          <div class="proximo-match-header">
+            <div class="proximo-match-title">${partido.local} vs ${partido.visitante}</div>
+            ${horaStr}
+          </div>
+          <div class="proximo-split">
+            <div class="proximo-col local">
+              <div class="proximo-col-title">${partido.local}</div>
+              <div class="proximo-flag">${flagLocal || partido.local}</div>
+              ${makeNames(bets.local)}
+            </div>
+            <div class="proximo-col empate">
+              <div class="proximo-col-title">Empate</div>
+              <div class="proximo-count">-</div>
+              ${makeNames(bets.empate)}
+            </div>
+            <div class="proximo-col visitante">
+              <div class="proximo-col-title">${partido.visitante}</div>
+              <div class="proximo-flag">${flagVisitante || partido.visitante}</div>
+              ${makeNames(bets.visitante)}
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+
+    document.getElementById('proximo-partido-card').innerHTML = `<div class="proximo-cards">${cardsHtml}</div>`;
+
+    document.getElementById('proximo-partido-section').style.display = 'block';
+
+    // Parsear fechaHora a Date para el contador (compartido por todos los partidos del bloque)
     const meses = {Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
     let partidoDate = null;
     if (proximo.fechaHora) {
@@ -1499,39 +1561,13 @@
       }
     }
 
-    document.getElementById('proximo-partido-card').innerHTML = `
-      <div class="proximo-card">
-        <div class="proximo-match-header">
-          <div class="proximo-match-title">${proximo.local} vs ${proximo.visitante}</div>
-          ${horaStr}
-        </div>
-        <div class="proximo-split">
-          <div class="proximo-col local">
-            <div class="proximo-col-title">${proximo.local}</div>
-            <div class="proximo-flag">${flagLocal || proximo.local}</div>
-            ${makeNames(bets.local)}
-          </div>
-          <div class="proximo-col empate">
-            <div class="proximo-col-title">Empate</div>
-            <div class="proximo-count">-</div>
-            ${makeNames(bets.empate)}
-          </div>
-          <div class="proximo-col visitante">
-            <div class="proximo-col-title">${proximo.visitante}</div>
-            <div class="proximo-flag">${flagVisitante || proximo.visitante}</div>
-            ${makeNames(bets.visitante)}
-          </div>
-        </div>
-      </div>`;
-
-    document.getElementById('proximo-partido-section').style.display = 'block';
-
     if (partidoDate) {
       const el = document.getElementById('proximo-countdown');
+      const destino = esPlural ? 'los próximos partidos' : 'el próximo partido';
       const tick = () => {
         const diff = partidoDate - Date.now();
         if (!el) return;
-        if (diff <= 0) { el.textContent = '¡El partido está en curso!'; return; }
+        if (diff <= 0) { el.textContent = esPlural ? '¡Los partidos están en curso!' : '¡El partido está en curso!'; return; }
         const h = Math.floor(diff / 3600000);
         const m = Math.floor((diff % 3600000) / 60000);
         const s = Math.floor((diff % 60000) / 1000);
@@ -1539,7 +1575,7 @@
         const mStr = m > 0 ? `${m} minuto${m !== 1 ? 's' : ''}` : '';
         const sStr = `${s} segundo${s !== 1 ? 's' : ''}`;
         const parts = [hStr, mStr, sStr].filter(Boolean);
-        el.textContent = `Faltan ${parts.slice(0, -1).join(', ')}${parts.length > 1 ? ' y ' : ''}${parts[parts.length - 1]} para el próximo partido`;
+        el.textContent = `Faltan ${parts.slice(0, -1).join(', ')}${parts.length > 1 ? ' y ' : ''}${parts[parts.length - 1]} para ${destino}`;
       };
       tick();
       countdownTimer = setInterval(tick, 1000);
@@ -1632,6 +1668,16 @@
     document.getElementById('pozo-final-detail').textContent = detalle;
   }
 
+  // ── MENSAJE DEL HEADER (celda MENSAJE del Config de la boleta activa) ──
+  async function loadHeaderMensaje() {
+    try {
+      const status = await api(BOLETAS.find(b => b.id === 3).apiUrl, 'status');
+      if (status && status.mensaje) {
+        document.getElementById('header-mensaje').textContent = status.mensaje;
+      }
+    } catch(e) {}
+  }
+
   function renderBoletaTabs() {
     document.getElementById('boleta-tabs').innerHTML = BOLETAS.map(b =>
       `<button class="boleta-tab ${b.id === activeBoleta.id ? 'active' : ''}" onclick="selectBoleta(${b.id})">${b.label}</button>`
@@ -1657,7 +1703,8 @@
   renderBoletaTabs();
   loadBoleta(activeBoleta);
   refreshPozoFinal();
-  setInterval(() => { loadBoleta(activeBoleta); refreshPozoFinal(); }, 60000); // refresca cada 60 segundos
+  loadHeaderMensaje();
+  setInterval(() => { loadBoleta(activeBoleta); refreshPozoFinal(); loadHeaderMensaje(); }, 60000); // refresca cada 60 segundos
 </script>
 </body>
 </html>

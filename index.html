@@ -1321,8 +1321,8 @@
       deadline: '10 de junio a las 23:59hs'
     }
   ];
-  // Los botones se muestran en orden 3-2-1, pero boleta 2 queda activa por defecto hasta que termine su último partido
-  let activeBoleta = BOLETAS.find(b => b.id === 2);
+  // Los botones se muestran en orden 3-2-1, y boleta 3 queda activa por defecto hasta que termine su último partido
+  let activeBoleta = BOLETAS.find(b => b.id === 3);
   const boletaCache = {};
   const fmt = n => '$' + Math.round(n).toLocaleString('es-AR');
 

@@ -129,6 +129,11 @@
     border-color: var(--celeste-dark);
     color: white;
   }
+  .boleta-tab.inactive {
+    opacity: 0.4;
+    cursor: not-allowed;
+    border-style: dashed;
+  }
 
   /* ── LOADING ── */
   #loading {
@@ -1298,31 +1303,10 @@
   })();
 
   // ── CONFIGURACIÓN ──────────────────────────────────────
-  const BOLETAS = [
-    {
-      id: 3,
-      label: 'Boleta 3',
-      apiUrl: 'https://script.google.com/macros/s/AKfycbwMlcnN2XMskYEMwgCx2XD_am6IOn6k1GFtePp12d3BpeeCilJa-Dd8VVexhcupmRBOcA/exec',
-      formUrl: 'https://forms.gle/sn9TSpE5KH4uzh4XA',
-      deadline: '24 de junio a las 15:00hs'
-    },
-    {
-      id: 2,
-      label: 'Boleta 2',
-      apiUrl: 'https://script.google.com/macros/s/AKfycbyEhLc-PrG8KhvzDEcZjUGmC_RfnL0Wt-kH6BZ4yUZvXy-ENkOT7-Xdxbnxtl95q3V0tw/exec',
-      formUrl: 'https://forms.gle/kPMP9dtTbML7z6Qz7',
-      deadline: '18 de junio a las 12:00hs'
-    },
-    {
-      id: 1,
-      label: 'Boleta 1',
-      apiUrl: 'https://script.google.com/macros/s/AKfycbyCjomqAOPflzrKCOxSY_tQO7CaV4MzNHT5nnLZLExDTRf4QsvRIWm8W6EIqvex-B6L/exec',
-      formUrl: 'https://forms.gle/LXh6nstzkptk3LWK7',
-      deadline: '10 de junio a las 23:59hs'
-    }
-  ];
-  // Los botones se muestran en orden 3-2-1, y boleta 3 queda activa por defecto hasta que termine su último partido
-  let activeBoleta = BOLETAS.find(b => b.id === 3);
+  // Toda la config viene del Google Sheet Admin — no editar acá
+  const ADMIN_URL = 'https://script.google.com/macros/s/AKfycbyO9lVBpcV1eTpLp6b5hq-5CPaP2VP9Yg58_T5hKhFcY25EZ52O0LjH4vYjZymAT3RISA/exec';
+  let BOLETAS = [];
+  let activeBoleta = null;
   const boletaCache = {};
   const fmt = n => '$' + Math.round(n).toLocaleString('es-AR');
 
@@ -1656,7 +1640,8 @@
 
   // ── POZO FINAL (acumulado entre todas las boletas) ─────
   async function refreshPozoFinal() {
-    const results = await Promise.all(BOLETAS.map(b =>
+    const conApi = BOLETAS.filter(b => b.apiUrl);
+    const results = await Promise.all(conApi.map(b =>
       api(b.apiUrl, 'jugadores').then(j => ({ boleta: b, acumuladoFinal: j.acumuladoFinal })).catch(() => null)
     ));
     const validos = results.filter(Boolean);
@@ -1668,19 +1653,21 @@
     document.getElementById('pozo-final-detail').textContent = detalle;
   }
 
-  // ── MENSAJE DEL HEADER (celda MENSAJE del Config de la boleta activa) ──
+  // ── MENSAJE DEL HEADER (viene del Sheet Admin, tab Config, clave "mensaje") ──
   async function loadHeaderMensaje() {
     try {
-      const status = await api(BOLETAS.find(b => b.id === 3).apiUrl, 'status');
-      if (status && status.mensaje) {
-        document.getElementById('header-mensaje').textContent = status.mensaje;
+      const config = await api(ADMIN_URL, 'config');
+      if (config && config.mensaje) {
+        document.getElementById('header-mensaje').textContent = config.mensaje;
       }
     } catch(e) {}
   }
 
   function renderBoletaTabs() {
     document.getElementById('boleta-tabs').innerHTML = BOLETAS.map(b =>
-      `<button class="boleta-tab ${b.id === activeBoleta.id ? 'active' : ''}" onclick="selectBoleta(${b.id})">${b.label}</button>`
+      b.activa
+        ? `<button class="boleta-tab ${b.id === activeBoleta?.id ? 'active' : ''}" onclick="selectBoleta(${b.id})">${b.label}</button>`
+        : `<button class="boleta-tab inactive" disabled title="Próximamente">${b.label}</button>`
     ).join('');
   }
 
@@ -1700,11 +1687,27 @@
     loadBoleta(activeBoleta);
   };
 
-  renderBoletaTabs();
-  loadBoleta(activeBoleta);
-  refreshPozoFinal();
-  loadHeaderMensaje();
-  setInterval(() => { loadBoleta(activeBoleta); refreshPozoFinal(); loadHeaderMensaje(); }, 60000); // refresca cada 60 segundos
+  async function init() {
+    try {
+      const raw = await api(ADMIN_URL, 'boletas');
+      BOLETAS = raw.sort((a, b) => b.id - a.id); // mayor id primero
+      activeBoleta = BOLETAS.find(b => b.defecto && b.activa) || BOLETAS.find(b => b.activa);
+    } catch(e) {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('error-msg').style.display = 'block';
+      return;
+    }
+    renderBoletaTabs();
+    if (activeBoleta) loadBoleta(activeBoleta);
+    refreshPozoFinal();
+    loadHeaderMensaje();
+    setInterval(() => {
+      if (activeBoleta) loadBoleta(activeBoleta);
+      refreshPozoFinal();
+      loadHeaderMensaje();
+    }, 60000);
+  }
+  init();
 </script>
 </body>
 </html>

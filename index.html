@@ -377,6 +377,90 @@
     margin-top: 0.35rem;
   }
 
+  /* ── PREMIO FINAL BANNER (solo Boleta Final) ── */
+  .premio-final-banner {
+    display: none;
+    background: var(--card-bg);
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 0.75rem 1.1rem;
+    margin-bottom: 1.25rem;
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+  }
+  .premio-final-banner::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, var(--sun), #ffd560);
+  }
+  .premio-final-headline {
+    display: flex;
+    align-items: baseline;
+    gap: 0.55rem;
+  }
+  .premio-final-title {
+    font-size: 0.65rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-soft);
+  }
+  .premio-final-total {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 0.03em;
+    color: var(--sun-dark);
+    line-height: 1;
+  }
+  .premio-final-breakdown {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .premio-final-item {
+    background: var(--celeste-pale);
+    border-radius: 11px;
+    padding: 0.3rem 0.6rem;
+  }
+  .premio-final-item-label {
+    display: block;
+    font-size: 0.52rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-mid);
+    margin-bottom: 0.12rem;
+  }
+  .premio-final-item-amount {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    color: var(--celeste-dark);
+  }
+  .premio-final-plus {
+    font-weight: 900;
+    font-size: 0.85rem;
+    color: var(--text-soft);
+  }
+  .premio-final-item-acumulado {
+    background: var(--text);
+    box-shadow: 0 0 0 3px rgba(246,180,14,0.5) inset;
+    animation: premioAcumuladoPulse 2s ease-in-out infinite;
+  }
+  .premio-final-item-acumulado .premio-final-item-label { color: #ffd560; }
+  .premio-final-item-acumulado .premio-final-item-amount { color: #fff2cc; }
+  @keyframes premioAcumuladoPulse {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(246,180,14,0.5) inset; }
+    50% { box-shadow: 0 0 0 3px rgba(246,180,14,0.95) inset; }
+  }
+
   /* ── RANKING ── */
   .ranking-table {
     width: 100%;
@@ -1011,6 +1095,17 @@
     }
     .pozo-final-label { font-size: 0.55rem; }
     .pozo-final-detail { font-size: 0.6rem; }
+    .premio-final-banner {
+      padding: 0.65rem 0.75rem;
+      border-radius: 13px;
+      margin-bottom: 1rem;
+      justify-content: center;
+      text-align: center;
+    }
+    .premio-final-title { font-size: 0.56rem; }
+    .premio-final-total { font-size: 1.5rem; }
+    .premio-final-item { padding: 0.25rem 0.5rem; }
+    .premio-final-item-amount { font-size: 0.85rem; }
     .stat-item {
       padding: 0.75rem 0.4rem;
       border-radius: 14px;
@@ -1113,6 +1208,25 @@
       </span>
     </div>
 
+    <!-- Premio final (boleta actual + pozo acumulado) — solo Boleta Final -->
+    <div class="premio-final-banner" id="premio-final-banner">
+      <div class="premio-final-headline">
+        <span class="premio-final-title">🏆 Premio Final</span>
+        <span class="premio-final-total" id="premio-final-total">$0</span>
+      </div>
+      <div class="premio-final-breakdown">
+        <div class="premio-final-item">
+          <span class="premio-final-item-label">Boleta Final</span>
+          <span class="premio-final-item-amount" id="premio-final-boleta-amount">$0</span>
+        </div>
+        <div class="premio-final-plus">+</div>
+        <div class="premio-final-item premio-final-item-acumulado">
+          <span class="premio-final-item-label">Pozo acumulado 🔥</span>
+          <span class="premio-final-item-amount" id="premio-final-acumulado-amount">$0</span>
+        </div>
+      </div>
+    </div>
+
     <!-- ── AVISOS Y LINKS ── -->
     <div class="avisos-section">
 
@@ -1196,7 +1310,7 @@
       </div>
 
       <!-- Pozo -->
-      <div class="section">
+      <div class="section" id="pozo-section">
         <div class="section-header">
           <div class="section-icon">💰</div>
           <span class="section-title">Pozos acumulados</span>
@@ -1205,7 +1319,7 @@
           <div class="pozo-card boleta">
             <div class="pozo-label">Boleta actual</div>
             <div class="pozo-amount" id="pozo-boleta">$0</div>
-            <div class="pozo-pct">85% del total recaudado</div>
+            <div class="pozo-pct" id="pozo-boleta-pct">85% del total recaudado</div>
           </div>
           <div class="pozo-card final">
             <div class="pozo-label">Boleta final</div>
@@ -1308,6 +1422,8 @@
   const ADMIN_URL = 'https://script.google.com/macros/s/AKfycbyO9lVBpcV1eTpLp6b5hq-5CPaP2VP9Yg58_T5hKhFcY25EZ52O0LjH4vYjZymAT3RISA/exec';
   let BOLETAS = [];
   let activeBoleta = null;
+  let pozoFinalTotal = 0;
+  function esBoletaFinal(boleta) { return !!boleta && boleta.label === 'Boleta Final'; }
   const boletaCache = {};
   const fmt = n => '$' + Math.round(n).toLocaleString('es-AR');
 
@@ -1599,6 +1715,7 @@
     document.getElementById('aviso-deadline').style.display = fase2 ? 'none' : 'block';
     document.getElementById('links-row').style.display = fase2 ? 'none' : 'flex';
     document.getElementById('phase-badge-container').style.display = fase2 ? 'none' : 'block';
+    document.getElementById('pozo-section').style.display = esBoletaFinal(boleta) ? 'none' : 'block';
 
     if (fase2 && ranking && predicciones) {
       renderRanking(ranking, partidos, predicciones);
@@ -1610,6 +1727,22 @@
     document.getElementById('loading').style.display = 'none';
     document.getElementById('error-msg').style.display = 'none';
     document.getElementById('content').style.display = 'block';
+
+    updatePremioFinalBanner(boleta, jugadores.acumuladoBoleta);
+  }
+
+  // ── PREMIO FINAL (boleta final + pozo acumulado, distinguido) ──
+  function updatePremioFinalBanner(boleta, acumuladoBoleta) {
+    const banner = document.getElementById('premio-final-banner');
+    if (!esBoletaFinal(boleta)) {
+      banner.style.display = 'none';
+      return;
+    }
+    const total = acumuladoBoleta + pozoFinalTotal;
+    document.getElementById('premio-final-total').textContent = fmt(total);
+    document.getElementById('premio-final-boleta-amount').textContent = fmt(acumuladoBoleta);
+    document.getElementById('premio-final-acumulado-amount').textContent = fmt(pozoFinalTotal);
+    banner.style.display = 'flex';
   }
 
   async function loadBoleta(boleta) {
@@ -1649,9 +1782,13 @@
     const total = validos.reduce((sum, r) => sum + r.acumuladoFinal, 0);
     const detalle = validos.map(r => `${r.boleta.label}: ${fmt(r.acumuladoFinal)}`).join(' + ');
 
+    pozoFinalTotal = total;
     document.getElementById('stat-final').textContent = fmt(total);
     document.getElementById('pozo-final').textContent = fmt(total);
     document.getElementById('pozo-final-detail').textContent = detalle;
+
+    const cached = boletaCache[activeBoleta?.id];
+    if (cached) updatePremioFinalBanner(activeBoleta, cached.jugadores.acumuladoBoleta);
   }
 
   // ── MENSAJE DEL HEADER (viene del Sheet Admin, tab Config, clave "mensaje") ──
